@@ -4,8 +4,11 @@ import SideBar from '../component/sidebar';
 import ExamManage from '../page/exam-management/index';
 import RoomManagement from '../page/room-management/index';
 import MemberSpacialProject from '../page/member-spacial-project/index';
+import AddMemberSpacialProject from '../page/add-member-spacial-project/index';
 import Sp2 from '../page/member-spacial-project/sp-2/index';
 import Sp1 from '../page/member-spacial-project/sp-1/index';
+import StudentNoLecture from '../page/student-no-lecture/index';
+import SumaryRoom from '../page/sumary-room/index';
 
 import '../theme/css/sidebar.css';
 
@@ -26,7 +29,7 @@ const router = createBrowserRouter([
     element: (
       <SideBar 
         page={ <ExamManage />}
-        pageName={"จัดการข้อสอบ"}
+        pageName={"จัดการเวลาสอบ"}
         pageSub={""}
         path={"/exam-management"}
       />
@@ -37,7 +40,7 @@ const router = createBrowserRouter([
     element: (
       <SideBar 
         page={ <RoomManagement />}
-        pageName={"จัดการห้องสอบ"}
+        pageName={"สร้างห้องสอบ"}
         pageSub={""}
         path={"/room-management"}
       />
@@ -62,6 +65,39 @@ const router = createBrowserRouter([
         pageName={"รายชื่อนักศึกษา"}
         pageSub={"sp-2"}
         path={"/member-spacial-project/sp-2"}
+      />
+    ),
+  },
+  {
+    path: "/sumary-room",
+    element: (
+      <SideBar 
+        page={ <SumaryRoom />}
+        pageName={"สรุปห้องสอบ"}
+        pageSub={""}
+        path={"/sumary-room"}
+      />
+    ),
+  },
+  {
+    path: "add-member-spacial-project",
+    element: (
+      <SideBar 
+        page={ <AddMemberSpacialProject />}
+        pageName={"เพิ่มรายชื่อนักศึกษา"}
+        pageSub={""}
+        path={"/add-member-spacial-project"}
+      />
+    ),
+  },
+  {
+    path: "/student-no-lecture",
+    element: (
+      <SideBar 
+        page={ <StudentNoLecture />}
+        pageName={"รายชื่อนักศึกษา"}
+        pageSub={"ไม่มีวิชา"}
+        path={"/student-no-lecture"}
       />
     ),
   }

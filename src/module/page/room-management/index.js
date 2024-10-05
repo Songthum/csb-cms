@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import api from "../../utils/form/api";
-import { Form, Select, Button, Typography, Row, Col, DatePicker, Input } from "antd";
+import {
+  Form,
+  Select,
+  Button,
+  Typography,
+  Row,
+  Col,
+  DatePicker,
+  Input,
+} from "antd";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -9,46 +18,82 @@ function App() {
   const [form] = Form.useForm();
   const [refereeCount, setRefereeCount] = useState(1);
   const [projectCount, setProjectCount] = useState(1);
-  const [referees, setReferees] = useState([{ keyLecturer: "", nameLecturer: "", roleLecturer: "" }]);
-  const [projects, setProjects] = useState([{ projectId: "", projectName: "", start_in_time: "" }]);
+  const [referees, setReferees] = useState([
+    { keyLecturer: "", nameLecturer: "", roleLecturer: "" },
+  ]);
+  const [projects, setProjects] = useState([
+    { projectId: "", projectName: "", start_in_time: "" },
+  ]);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [data, setData] = useState([]);
-  const refereeNames = [
-    {
-      keyLecturer: "TTR",
-      nameLecturer: "อ.ธนาธร",
-    },
-    {
-      keyLecturer: "MOODENG",
-      nameLecturer: "อ.มุดเด่น",
-    },
-    {
-      keyLecturer: "YOMRACH",
-      nameLecturer: "อ.ยมราช",
-    }
-  ];
+  const [refereeNames, setRefereeNames] = useState([]);
+  // const refereeNames = [
+  //   {
+  //     keyLecturer: "TTR",
+  //     nameLecturer: "อ.ธนาธร",
+  //   },
+  //   {
+  //     keyLecturer: "MOODENG",
+  //     nameLecturer: "อ.มุดเด่น",
+  //   },
+  //   {
+  //     keyLecturer: "YOMRACH",
+  //     nameLecturer: "อ.ยมราช",
+  //   },
+  // ];
   const projectTimes = [
-    "09:00", "09:15", "09:30", "09:45",
-    "10:00", "10:15", "10:30", "10:45",
-    "11:00", "11:15", "11:30", "11:45",
-    "13:00", "13:15", "13:30", "13:45",
-    "14:00", "14:15", "14:30", "14:45",
-    "15:00", "15:15", "15:30", "15:45",
+    "09:00",
+    "09:15",
+    "09:30",
+    "09:45",
+    "10:00",
+    "10:15",
+    "10:30",
+    "10:45",
+    "11:00",
+    "11:15",
+    "11:30",
+    "11:45",
+    "13:00",
+    "13:15",
+    "13:30",
+    "13:45",
+    "14:00",
+    "14:15",
+    "14:30",
+    "14:45",
+    "15:00",
+    "15:15",
+    "15:30",
+    "15:45",
   ];
 
   // Fetch project data and map _id to projectId
   useEffect(() => {
-    api.getAllProject()
+    api
+      .getAllProject()
       .then((res) => {
-        const projectData = res.data.body.map(({ _id, projectName, start_in_time }) => ({
-          projectId: _id,
-          projectName,
-          start_in_time,
-        }));
+        const projectData = res.data.body.map(
+          ({ _id, projectName, start_in_time }) => ({
+            projectId: _id,
+            projectName,
+            start_in_time,
+          })
+        );
         setData(projectData);
-        setProjects([{ projectId: "", projectName: "", start_in_time: "" }]); 
+        setProjects([{ projectId: "", projectName: "", start_in_time: "" }]);
       })
       .catch(console.error);
+
+    api
+      .getLeacturer()
+      .then((res) => {
+        console.log(res.data.body);
+        setRefereeNames(res.data.body);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const handleSubmit = (values) => {
@@ -59,7 +104,8 @@ function App() {
       referees,
       projects,
     };
-    api.createRoomManagement(body)
+    api
+      .createRoomManagement(body)
       .then((res) => {
         form.resetFields();
         setReferees([{ keyLecturer: "", nameLecturer: "", roleLecturer: "" }]);
@@ -71,9 +117,16 @@ function App() {
 
   const checkFormValidity = () => {
     const values = form.getFieldsValue();
-    const allFieldsFilled = values.examRoom && values.examName && values.examDate &&
-      referees.every(({ nameLecturer, roleLecturer }) => nameLecturer && roleLecturer) &&
-      projects.every(({ projectId, start_in_time }) => projectId && start_in_time);
+    const allFieldsFilled =
+      values.examRoom &&
+      values.examName &&
+      values.examDate &&
+      referees.every(
+        ({ nameLecturer, roleLecturer }) => nameLecturer && roleLecturer
+      ) &&
+      projects.every(
+        ({ projectId, start_in_time }) => projectId && start_in_time
+      );
 
     setIsSubmitDisabled(!allFieldsFilled);
   };
@@ -91,42 +144,76 @@ function App() {
   };
 
   const handleLecturerChange = (index, keyLecturer) => {
-    const selectedLecturer = refereeNames.find((referee) => referee.keyLecturer === keyLecturer);
+    const selectedLecturer = refereeNames.find(
+      (referee) => referee.keyLecturer === keyLecturer
+    );
     if (selectedLecturer) {
       handleDynamicFieldChange(setReferees, index, "keyLecturer", keyLecturer);
-      handleDynamicFieldChange(setReferees, index, "nameLecturer", selectedLecturer.nameLecturer);
+      handleDynamicFieldChange(
+        setReferees,
+        index,
+        "nameLecturer",
+        selectedLecturer.nameLecturer
+      );
     }
   };
 
   const handleProjectNameChange = (index, projectName) => {
-    const selectedProject = data.find((project) => project.projectName === projectName);
+    const selectedProject = data.find(
+      (project) => project.projectName === projectName
+    );
     handleDynamicFieldChange(setProjects, index, "projectName", projectName);
     if (selectedProject) {
-      handleDynamicFieldChange(setProjects, index, "projectId", selectedProject.projectId);
+      handleDynamicFieldChange(
+        setProjects,
+        index,
+        "projectId",
+        selectedProject.projectId
+      );
     }
   };
 
-  const handleCountChange = (setState, setCount, value, limit, fieldTemplate) => {
+  const handleCountChange = (
+    setState,
+    setCount,
+    value,
+    limit,
+    fieldTemplate
+  ) => {
     const count = Math.min(Number(value), limit);
     const newFields = Array.from({ length: count }, (_, index) => ({
       ...fieldTemplate,
-      ...(setState[index] || {})
+      ...(setState[index] || {}),
     }));
     setState(newFields);
     setCount(count);
   };
 
   const filteredOptions = (options, selected, currentIndex) =>
-    options.filter((option) => !selected.includes(option) || selected[currentIndex] === option);
+    options.filter(
+      (option) =>
+        !selected.includes(option) || selected[currentIndex] === option
+    );
 
   return (
     <div style={{ maxWidth: "90%", margin: "auto", padding: "20px" }}>
-      <Title level={2} style={{ textAlign: "center" }}>แบบฟอร์มจัดห้องสอบ</Title>
+      <Title level={2} style={{ textAlign: "center" }}>
+        แบบฟอร์มจัดห้องสอบ
+      </Title>
 
-      <Form form={form} layout="vertical" onFinish={handleSubmit} initialValues={{ examRoom: "", examName: "", examDate: null }}>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+        initialValues={{ examRoom: "", examName: "", examDate: null }}
+      >
         <Row gutter={16}>
           <Col span={8}>
-            <Form.Item label="ห้องสอบ (Exam Room)" name="examRoom" rules={[{ required: true, message: "กรุณาเลือกห้องสอบ" }]}>
+            <Form.Item
+              label="ห้องสอบ (Exam Room)"
+              name="examRoom"
+              rules={[{ required: true, message: "กรุณาเลือกห้องสอบ" }]}
+            >
               <Select placeholder="เลือกห้องสอบ">
                 <Option value="room101">617</Option>
                 <Option value="room102">618/1</Option>
@@ -138,7 +225,11 @@ function App() {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="ชื่อการสอบ (Exam Name)" name="examName" rules={[{ required: true, message: "กรุณาเลือกชื่อการสอบ" }]}>
+            <Form.Item
+              label="ชื่อการสอบ (Exam Name)"
+              name="examName"
+              rules={[{ required: true, message: "กรุณาเลือกชื่อการสอบ" }]}
+            >
               <Select placeholder="เลือกชื่อการสอบ">
                 <Option value="CSB01">สอบข้อหัว</Option>
                 <Option value="CSB02">สอบก้าวหน้า</Option>
@@ -147,8 +238,16 @@ function App() {
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="วันที่สอบ (Exam Date)" name="examDate" rules={[{ required: true, message: "กรุณาเลือกวันที่สอบ" }]}>
-              <DatePicker format="YYYY-MM-DD" placeholder="เลือกวันที่สอบ" style={{ width: "100%" }} />
+            <Form.Item
+              label="วันที่สอบ (Exam Date)"
+              name="examDate"
+              rules={[{ required: true, message: "กรุณาเลือกวันที่สอบ" }]}
+            >
+              <DatePicker
+                format="YYYY-MM-DD"
+                placeholder="เลือกวันที่สอบ"
+                style={{ width: "100%" }}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -176,7 +275,9 @@ function App() {
             <Col span={12}>
               <Form.Item
                 label="ชื่อกรรมการสอบ"
-                rules={[{ required: true, message: "กรุณาเลือกชื่อกรรมการสอบ" }]}
+                rules={[
+                  { required: true, message: "กรุณาเลือกชื่อกรรมการสอบ" },
+                ]}
               >
                 <Select
                   placeholder="เลือกชื่อกรรมการสอบ"
@@ -200,7 +301,12 @@ function App() {
                   placeholder="เลือกตำแหน่ง"
                   value={referees[index].roleLecturer}
                   onChange={(value) =>
-                    handleDynamicFieldChange(setReferees, index, "roleLecturer", value)
+                    handleDynamicFieldChange(
+                      setReferees,
+                      index,
+                      "roleLecturer",
+                      value
+                    )
                   }
                 >
                   <Option value="main">ประธานกรรมการ</Option>
@@ -262,7 +368,12 @@ function App() {
                   placeholder="เลือกเวลา"
                   value={projects[index].start_in_time}
                   onChange={(value) =>
-                    handleDynamicFieldChange(setProjects, index, "start_in_time", value)
+                    handleDynamicFieldChange(
+                      setProjects,
+                      index,
+                      "start_in_time",
+                      value
+                    )
                   }
                 >
                   {filteredOptions(

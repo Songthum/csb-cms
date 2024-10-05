@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { navigate } from 'react-router-dom';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import api from './module/utils/form/api';
-import logo from './logo.svg';
+import staff from './module/public/image/staff.png';
 import './App.css';
 
 function App() {
@@ -26,24 +26,12 @@ function App() {
 
   return (
     <>
-    {data}
+     <div>
+      <h1>สวัสดี เจ้าหน้าที่ CSB ทุกท่าน</h1>
+      {/* <img src={staff} className="App-logo" alt="logo" /> */}
+      <img src={staff} className="" alt="logo" />
+     </div>
     </>
-    // <div className="App">
-    //   <header className="App-header">
-    //     <img src={logo} className="App-logo" alt="logo" />
-    //     <p>
-    //       Edit <code>src/App.js</code> and save to reload.
-    //     </p>
-    //     <a
-    //       className="App-link"
-    //       href="https://reactjs.org"
-    //       target="_blank"
-    //       rel="noopener noreferrer"
-    //     >
-    //       Learn React
-    //     </a>
-    //   </header>
-    // </div>
   );
 }
 
