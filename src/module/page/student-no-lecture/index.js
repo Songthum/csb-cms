@@ -1,14 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import api from "../../../utils/form/api";
+import api from "../../utils/form/api";
 import { Table } from "antd";
 
-export default function Sp1() {
+export default function StudentNoLecture() {
   const [data, setData] = useState([]);
 
   const fetchData = async () => {
-    const body = { projectValidate: [1, 0] };
+    const body = { projectValidate: [0, 0] };
     api
       .getStudent(body)
       .then((res) => {
