@@ -3,6 +3,10 @@ import App from '../../App';
 import SideBar from '../component/sidebar';
 import ExamManage from '../page/exam-management/index';
 import RoomManagement from '../page/room-management/index';
+import MemberSpacialProject from '../page/member-spacial-project/index';
+import Sp2 from '../page/member-spacial-project/sp-2/index';
+import Sp1 from '../page/member-spacial-project/sp-1/index';
+
 import '../theme/css/sidebar.css';
 
 const router = createBrowserRouter([
@@ -39,6 +43,28 @@ const router = createBrowserRouter([
       />
     ),
   },
+  {
+    path: "/member-spacial-project/sp-1",
+    element: (
+      <SideBar 
+        page={ < Sp1/>}
+        pageName={"รายชื่อนักศึกษา"}
+        pageSub={"sp-1"}
+        path={"/member-spacial-project/sp-1"}
+      />
+    ),
+  },
+  {
+    path: "/member-spacial-project/sp-2",
+    element: (
+      <SideBar 
+        page={ < Sp2/>}
+        pageName={"รายชื่อนักศึกษา"}
+        pageSub={"sp-2"}
+        path={"/member-spacial-project/sp-2"}
+      />
+    ),
+  }
 ]);
 
 export default router;
