@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+
+
+import React, { useState, useEffect } from "react";
 import { Form, Select, Button, Typography, Row, Col, DatePicker, Input } from "antd";
 
 const { Title } = Typography;
@@ -6,16 +8,17 @@ const { Option } = Select;
 
 function App() {
   const [form] = Form.useForm();
-  const [refereeCount, setRefereeCount] = useState(1); // จำนวน referee ที่ต้องการ
-  const [projectCount, setProjectCount] = useState(1); // จำนวนโครงงานที่ต้องการ
+  const [refereeCount, setRefereeCount] = useState(); // จำนวน referee ที่ต้องการ
+  const [projectCount, setProjectCount] = useState(); // จำนวนโครงงานที่ต้องการ
   const [referees, setReferees] = useState([{ name: "", role: "" }]); // รายชื่อ referee
   const [projects, setProjects] = useState([{ name: "", time: "" }]); // รายชื่อโครงงาน
   const refereeNames = ["อาจารย์สมชาย", "อาจารย์สมหญิง", "อาจารย์รัตนา"]; // รายชื่ออาจารย์ทั้งหมด
   const projectNames = ["โครงงาน 1", "โครงงาน 2", "โครงงาน 3"]; // รายชื่อโครงงานทั้งหมด
-  const projectTimes = ["09:00","09:15","09:30","09:45", "10:00","10:15","10:30","10:45", "11:00","11:15","11:30","11:45",
-                        "13:00","13:15","13:30","13:45","14:00","14:15","14:30","14:45","15:00","15:15","15:30","15:45",]; // เวลาที่เลือกได้
+  const projectTimes = ["09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45", "11:00", "11:15", "11:30", "11:45",
+    "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45",]; // เวลาที่เลือกได้
   const [refereeRole, setRefereeRole] = useState([]);
-  const [HeadReferee,setHeadReferee] = useState("");
+  const [HeadReferee, setHeadReferee] = useState("");
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const handleSubmit = (values) => {
     console.log("ห้องสอบ:", values.examRoom);
@@ -26,8 +29,20 @@ function App() {
     // ส่งข้อมูลไปยัง backend หรือ API ที่นี่
   };
 
+  const checkFormValidity = () => {
+    const values = form.getFieldsValue();
+    const allFieldsFilled =
+      values.examRoom &&
+      values.examName &&
+      values.examDate &&
+      referees.every(referee => referee.name && referee.role) &&
+      projects.every(project => project.name && project.time);
+
+    setIsSubmitDisabled(!allFieldsFilled);
+  };
+
   const handleProjectCountChange = (e) => {
-    const count = Number(e.target.value);
+    const count = Math.min(Number(e.target.value), 20); // จำกัดจำนวนโครงงานไม่ให้เกิน 20
     setProjectCount(count);
     const newProjects = Array.from({ length: count }, () => ({ name: "", time: "" }));
     setProjects(newProjects);
@@ -75,29 +90,24 @@ function App() {
   };
 
   const handleRefereeCountChange = (e) => {
-    const count = Number(e.target.value);
+    const count = Math.min(Number(e.target.value), 5); // จำกัดจำนวนกรรมการไม่ให้เกิน 5
     setRefereeCount(count);
     const newReferees = Array.from({ length: count }, () => ({ name: "", role: "" }));
     setReferees(newReferees);
-    setRefereeRole([]);
+    // setRefereeRole([]);
   };
 
   const handleRefereeChange = (index, field, value) => {
     const newReferees = [...referees];
     newReferees[index][field] = value;
     setReferees(newReferees);
+    console.log(newReferees)
   };
 
-  const generateTimeOptions = () => {
-    const times = [];
-    for (let hour = 9; hour <= 18; hour++) { // ตั้งแต่ 9:00 ถึง 18:00
-      for (let minute = 0; minute < 60; minute += 15) {
-        const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-        times.push(<Option key={time} value={time}>{time}</Option>);
-      }
-    }
-    return times;
-  };
+  // useEffect เพื่อเช็คความถูกต้องของฟอร์มทุกครั้งที่มีการเปลี่ยนแปลง
+  useEffect(() => {
+    checkFormValidity();
+  }, [form, referees, projects]);
 
   return (
     <div style={{ maxWidth: "90%", margin: "auto", padding: "20px" }}>
@@ -179,9 +189,9 @@ function App() {
           <Row gutter={16} key={index}>
             <Col span={12}>
               <Form.Item
-                label={`ชื่อกรรมการสอบ ${index + 1}`}
-                rules={[{ required: true, message: "กรุณาเลือกชื่อกรรมการสอบ" }]}
-              >
+                label="ชื่อกรรมการสอบ"
+                rules={[{ required: true, message: "กรุณาเลือกชื่อกรรมการสอบ" }]}>
+
                 <Select
                   placeholder="เลือกชื่อกรรมการสอบ"
                   onChange={(value) => handleRefereeChange(index, 'name', value)}
@@ -206,12 +216,13 @@ function App() {
                   onChange={(value) => {
                     handleRefereeChange(index, "role", value);
                     setHeadReferee(referees[index].name);
-                    if (referees[index].role === "main") {
-                      setRefereeRole(referees[index].role);
+                    if (value === "main") {
+                      setRefereeRole(value);
                     }
                   }}
+                  // value={referees[index].role}
                 >
-                  {refereeRole <= 0 && (
+                  {refereeRole.length === 0 && (
                     <Option value="main">ประธานกรรมการ</Option>
                   )}
                   <Option value="sub">กรรมการ</Option>
@@ -255,30 +266,34 @@ function App() {
             </Col>
 
             <Col span={12}>
-            <Form.Item
-  label={`เวลา (Time) ${index + 1}`}
-  rules={[{ required: true, message: "กรุณาเลือกเวลา" }]}
->
-  <Select
-    placeholder="เลือกเวลา"
-    onChange={(value) => handleProjectChange(index, 'time', value)}
-    value={projects[index].time}
-  >
-    {getFilteredProjectTimes(index).map((time) => (
-      <Option key={time} value={time}>
-        {time}
-      </Option>
-    ))}
-  </Select>
-</Form.Item>
-
+              <Form.Item
+                label={`เวลา (Time) ${index + 1}`}
+                rules={[{ required: true, message: "กรุณาเลือกเวลา" }]}
+              >
+                <Select
+                  placeholder="เลือกเวลา"
+                  onChange={(value) => handleProjectChange(index, 'time', value)}
+                  value={projects[index].time}
+                >
+                  {getFilteredProjectTimes(index).map((time) => (
+                    <Option key={time} value={time}>
+                      {time}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
             </Col>
           </Row>
         ))}
 
         {/* ปุ่มส่งข้อมูล */}
         <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            style={{ width: "100%" }}
+            disabled={isSubmitDisabled} // ใช้สถานะ disabled ที่เรากำหนด
+          >
             ส่งข้อมูล
           </Button>
         </Form.Item>
