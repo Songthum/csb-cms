@@ -25,16 +25,16 @@ const menuItems = [
     key: "/room-management",
     icon: React.createElement(LaptopOutlined),
     label: "จัดการห้องสอบ",
-    children: [
-      {
-        key: "/room-management/add-room",
-        label: "เพิ่มห้องสอบ",
-      },
-      {
-        key: "/room-management/edit-room",
-        label: "แก้ไขห้องสอบ",
-      }
-    ]
+    // children: [
+    //   {
+    //     key: "/room-management/add-room",
+    //     label: "เพิ่มห้องสอบ",
+    //   },
+    //   {
+    //     key: "/room-management/edit-room",
+    //     label: "แก้ไขห้องสอบ",
+    //   }
+    // ]
   },
   {
     key: "/member-spacial-project",

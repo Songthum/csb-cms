@@ -38,10 +38,21 @@ export default{
   service,
   apiUrl: BASE,
   frontendUrl: FRONTEND,
-
+  
   login: (data) => service.post('/auth/login', data),
   getNewToken: () => service.post('/auth/refresh-token'),
+
+
   getHomePage: (params) => service.get('/', {params}),
+
+
   getExamePage: (params) => service.get('/exam-management', {params}),
+
+  // RoomManagement
+  getRoomPage: (params) => service.get('/room-management', {params}),
+  createRoomManagement: (data) => service.post('/create-room-management', data),
+
+  // getAllProject
+  getAllProject: (params) => service.get('/project-students', {params}),
 }
 
