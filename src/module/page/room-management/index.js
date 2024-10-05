@@ -4,13 +4,18 @@ import { Form, Select, Button, Typography, Row, Col, DatePicker, Input } from "a
 const { Title } = Typography;
 const { Option } = Select;
 
-export default function RoomManagement() {
+function App() {
   const [form] = Form.useForm();
   const [refereeCount, setRefereeCount] = useState(1); // จำนวน referee ที่ต้องการ
   const [projectCount, setProjectCount] = useState(1); // จำนวนโครงงานที่ต้องการ
   const [referees, setReferees] = useState([{ name: "", role: "" }]); // รายชื่อ referee
-  const [headReferee, setHeadReferee] = useState(""); // ค่าของประธานกรรมการ
   const [projects, setProjects] = useState([{ name: "", time: "" }]); // รายชื่อโครงงาน
+  const refereeNames = ["อาจารย์สมชาย", "อาจารย์สมหญิง", "อาจารย์รัตนา"]; // รายชื่ออาจารย์ทั้งหมด
+  const projectNames = ["โครงงาน 1", "โครงงาน 2", "โครงงาน 3"]; // รายชื่อโครงงานทั้งหมด
+  const projectTimes = ["09:00","09:15","09:30","09:45", "10:00","10:15","10:30","10:45", "11:00","11:15","11:30","11:45",
+                        "13:00","13:15","13:30","13:45","14:00","14:15","14:30","14:45","15:00","15:15","15:30","15:45",]; // เวลาที่เลือกได้
+  const [refereeRole, setRefereeRole] = useState([]);
+  const [HeadReferee,setHeadReferee] = useState("");
 
   const handleSubmit = (values) => {
     console.log("ห้องสอบ:", values.examRoom);
@@ -21,46 +26,71 @@ export default function RoomManagement() {
     // ส่งข้อมูลไปยัง backend หรือ API ที่นี่
   };
 
-  const handleRefereeCountChange = (e) => {
-    const count = Number(e.target.value);
-    setRefereeCount(count);
-
-    // สร้างอาเรย์ของ referees ตามจำนวนที่กรอก
-    const newReferees = Array.from({ length: count }, () => ({ name: "", role: "" }));
-    setReferees(newReferees);
-  };
-
   const handleProjectCountChange = (e) => {
     const count = Number(e.target.value);
     setProjectCount(count);
-
-    // สร้างอาเรย์ของ projects ตามจำนวนที่กรอก
     const newProjects = Array.from({ length: count }, () => ({ name: "", time: "" }));
     setProjects(newProjects);
   };
 
-  const handleRefereeChange = (index, field, value) => {
-    const newReferees = [...referees];
-    newReferees[index][field] = value;
+  const getFilteredRefereeNames = (currentIndex) => {
+    const selectedNames = referees.map((ref) => ref.name);
+    return refereeNames.filter((name) => !selectedNames.includes(name) || referees[currentIndex].name === name);
+  };
 
-    // ถ้าเลือกประธานกรรมการให้ตั้งค่าหมายเลขประธานกรรมการ
-    if (field === "role" && value === "head") {
-      setHeadReferee(newReferees[index].name);
-    }
+  const getFilteredProjectNames = (currentIndex) => {
+    const selectedNames = projects.map((proj) => proj.name);
+    return projectNames.filter((name) => !selectedNames.includes(name) || projects[currentIndex].name === name);
+  };
 
-    setReferees(newReferees);
+  const getFilteredProjectTimes = (currentIndex) => {
+    const selectedTimes = projects.map((proj) => proj.time);
+    return projectTimes.filter((time) => !selectedTimes.includes(time) || projects[currentIndex].time === time);
   };
 
   const handleProjectChange = (index, field, value) => {
     const newProjects = [...projects];
     newProjects[index][field] = value;
+
+    // ตรวจสอบไม่ให้เลือกชื่อโครงงานหรือเวลาเดียวกัน
+    if (field === 'name') {
+      // ถ้าชื่อโครงงานถูกเปลี่ยน จะต้องตรวจสอบเวลา
+      const timeSelected = newProjects[index].time;
+      newProjects.forEach((project, idx) => {
+        if (idx !== index && project.name === value) {
+          project.time = ""; // ถ้าเลือกชื่อเดียวกันให้ล้างเวลา
+        }
+      });
+    } else if (field === 'time') {
+      // ถ้าเวลาโดนเปลี่ยนจะต้องตรวจสอบชื่อ
+      const nameSelected = newProjects[index].name;
+      newProjects.forEach((project, idx) => {
+        if (idx !== index && project.time === value) {
+          project.name = ""; // ถ้าเวลาเดียวกันให้ล้างชื่อ
+        }
+      });
+    }
+
     setProjects(newProjects);
   };
 
-  // ฟังก์ชันเพื่อสร้างตัวเลือกเวลาทุก 15 นาที
+  const handleRefereeCountChange = (e) => {
+    const count = Number(e.target.value);
+    setRefereeCount(count);
+    const newReferees = Array.from({ length: count }, () => ({ name: "", role: "" }));
+    setReferees(newReferees);
+    setRefereeRole([]);
+  };
+
+  const handleRefereeChange = (index, field, value) => {
+    const newReferees = [...referees];
+    newReferees[index][field] = value;
+    setReferees(newReferees);
+  };
+
   const generateTimeOptions = () => {
     const times = [];
-    for (let hour = 9; hour <= 16; hour++) { // ตั้งแต่ 9:00 ถึง 18:00
+    for (let hour = 9; hour <= 18; hour++) { // ตั้งแต่ 9:00 ถึง 18:00
       for (let minute = 0; minute < 60; minute += 15) {
         const time = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
         times.push(<Option key={time} value={time}>{time}</Option>);
@@ -70,7 +100,7 @@ export default function RoomManagement() {
   };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "auto", padding: "20px" }}>
+    <div style={{ maxWidth: "90%", margin: "auto", padding: "20px" }}>
       <Title level={2} style={{ textAlign: "center" }}>แบบฟอร์มจัดห้องสอบ</Title>
 
       <Form
@@ -133,10 +163,8 @@ export default function RoomManagement() {
           </Col>
         </Row>
 
-        {/* จำนวน referee */}
-        <Form.Item
-          label="จำนวนกรรมการสอบ"
-        >
+        {/* จำนวนกรรมการสอบ */}
+        <Form.Item label="จำนวนกรรมการสอบ">
           <Input
             type="number"
             min={1}
@@ -146,7 +174,7 @@ export default function RoomManagement() {
           />
         </Form.Item>
 
-        {/* แสดงฟิลด์สำหรับ Referee */}
+        {/* แสดงฟิลด์สำหรับกรรมการสอบ */}
         {Array.from({ length: refereeCount }).map((_, index) => (
           <Row gutter={16} key={index}>
             <Col span={12}>
@@ -157,10 +185,13 @@ export default function RoomManagement() {
                 <Select
                   placeholder="เลือกชื่อกรรมการสอบ"
                   onChange={(value) => handleRefereeChange(index, 'name', value)}
+                  value={referees[index].name}
                 >
-                  <Option value="referee1">อาจารย์สมชาย</Option>
-                  <Option value="referee2">อาจารย์สมหญิง</Option>
-                  <Option value="referee3">อาจารย์รัตนา</Option>
+                  {getFilteredRefereeNames(index).map((name) => (
+                    <Option key={name} value={name}>
+                      {name}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Col>
@@ -173,25 +204,16 @@ export default function RoomManagement() {
                 <Select
                   placeholder="เลือกตำแหน่ง"
                   onChange={(value) => {
-                    handleRefereeChange(index, 'role', value);
-                    // ถ้าคุณเลือกประธานกรรมการ ต้องตั้งค่าชื่อกรรมการเป็นผู้ที่เป็นประธาน
-                    if (value === "head") {
-                      // ตรวจสอบว่าได้เลือกกรรมการคนอื่นเป็นประธานไหม
-                      if (headReferee && headReferee !== referees[index].name) {
-                        alert("กรรมการคนนี้ถูกเลือกเป็นประธานแล้ว");
-                        return;
-                      }
-                      setHeadReferee(referees[index].name);
-                    } else {
-                      // ถ้าไม่ใช่ประธาน ให้ลบกรรมการออกจากประธาน
-                      if (headReferee === referees[index].name) {
-                        setHeadReferee("");
-                      }
+                    handleRefereeChange(index, "role", value);
+                    setHeadReferee(referees[index].name);
+                    if (referees[index].role === "main") {
+                      setRefereeRole(referees[index].role);
                     }
                   }}
-                  disabled={headReferee && headReferee !== referees[index].name}
                 >
-                  <Option value="head">ประธานกรรมการ</Option>
+                  {refereeRole <= 0 && (
+                    <Option value="main">ประธานกรรมการ</Option>
+                  )}
                   <Option value="sub">กรรมการ</Option>
                 </Select>
               </Form.Item>
@@ -200,9 +222,7 @@ export default function RoomManagement() {
         ))}
 
         {/* จำนวนโครงงาน */}
-        <Form.Item
-          label="จำนวนโครงงาน"
-        >
+        <Form.Item label="จำนวนโครงงาน">
           <Input
             type="number"
             min={1}
@@ -223,34 +243,48 @@ export default function RoomManagement() {
                 <Select
                   placeholder="เลือกชื่อโครงงาน"
                   onChange={(value) => handleProjectChange(index, 'name', value)}
+                  value={projects[index].name}
                 >
-                  <Option value="project1">โครงงาน 1</Option>
-                  <Option value="project2">โครงงาน 2</Option>
-                  <Option value="project3">โครงงาน 3</Option>
+                  {getFilteredProjectNames(index).map((name) => (
+                    <Option key={name} value={name}>
+                      {name}
+                    </Option>
+                  ))}
                 </Select>
               </Form.Item>
             </Col>
 
             <Col span={12}>
-              <Form.Item
-                label={`เวลา (Time) ${index + 1}`}
-                rules={[{ required: true, message: "กรุณาเลือกเวลา" }]}
-              >
-                <Select
-                  placeholder="เลือกเวลานะจ้ะ"
-                  onChange={(value) => handleProjectChange(index, 'time', value)}
-                >
-                  {generateTimeOptions()}
-                </Select>
-              </Form.Item>
+            <Form.Item
+  label={`เวลา (Time) ${index + 1}`}
+  rules={[{ required: true, message: "กรุณาเลือกเวลา" }]}
+>
+  <Select
+    placeholder="เลือกเวลา"
+    onChange={(value) => handleProjectChange(index, 'time', value)}
+    value={projects[index].time}
+  >
+    {getFilteredProjectTimes(index).map((time) => (
+      <Option key={time} value={time}>
+        {time}
+      </Option>
+    ))}
+  </Select>
+</Form.Item>
+
             </Col>
           </Row>
         ))}
 
+        {/* ปุ่มส่งข้อมูล */}
         <Form.Item>
-          <Button type="primary" htmlType="submit">ส่งข้อมูล</Button>
+          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+            ส่งข้อมูล
+          </Button>
         </Form.Item>
       </Form>
     </div>
   );
 }
+
+export default App;
