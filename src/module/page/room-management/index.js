@@ -237,7 +237,7 @@ export default function RoomManagement() {
                 rules={[{ required: true, message: "กรุณาเลือกเวลา" }]}
               >
                 <Select
-                  placeholder="เลือกเวลา"
+                  placeholder="เลือกเวลานะจ้ะ"
                   onChange={(value) => handleProjectChange(index, 'time', value)}
                 >
                   {generateTimeOptions()}
