@@ -25,7 +25,32 @@ const menuItems = [
     key: "/room-management",
     icon: React.createElement(LaptopOutlined),
     label: "จัดการห้องสอบ",
+    children: [
+      {
+        key: "/room-management/add-room",
+        label: "เพิ่มห้องสอบ",
+      },
+      {
+        key: "/room-management/edit-room",
+        label: "แก้ไขห้องสอบ",
+      }
+    ]
   },
+  {
+    key: "/member-spacial-project",
+    icon: React.createElement(UserOutlined),
+    label: "รายชื่อนักศึกษา",
+    children: [
+      {
+        key: "/member-spacial-project/sp-1",
+        label: "Special Project 1", 
+      },
+      {
+        key: "/member-spacial-project/sp-2",
+        label: "Special Project 2",
+      }
+    ]
+  }
 ];
 
 const SiderBar = ({ page, pageName, pageSub, path }) => {
@@ -37,13 +62,12 @@ const SiderBar = ({ page, pageName, pageSub, path }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set selectedKey when path changes
     setSelectedKey(path);
   }, [path]);
 
   const handleMenuClick = (e) => {
     setSelectedKey(e.key);
-    navigate(e.key);  // Navigate to the clicked path
+    navigate(e.key);
   };
 
   return (
