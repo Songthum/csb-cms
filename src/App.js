@@ -26,13 +26,20 @@ function App() {
 
   return (
     <>
-     <div>
-      <h1>สวัสดี เจ้าหน้าที่ CSB ทุกท่าน</h1>
-      {/* <img src={staff} className="App-logo" alt="logo" /> */}
-      <img src={staff} className="" alt="logo" />
-     </div>
+      <div
+        style={{display: "flex", flexDirection: "column", textAlign: "center", // จัดข้อความให้อยู่ตรงกลาง
+          // alignItems: "center", // จัดให้อยู่ตรงกลางในแนวนอน
+          // justifyContent: "center", // จัดให้อยู่ตรงกลางในแนวตั้ง
+          // height: "100vh", // ใช้ความสูงเต็มหน้าจอ
+        }}
+      >
+        <h2>สวัสดี เจ้าหน้าที่ CSB ทุกท่าน</h2>
+        {/* <img src={staff} className="App-logo" alt="logo" /> */}
+        <img src={staff} className="" alt="logo" />
+      </div>
     </>
   );
+  
 }
 
 export default App;

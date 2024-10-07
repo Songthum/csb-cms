@@ -215,12 +215,12 @@ function App() {
               rules={[{ required: true, message: "กรุณาเลือกห้องสอบ" }]}
             >
               <Select placeholder="เลือกห้องสอบ">
-                <Option value="room101">617</Option>
-                <Option value="room102">618/1</Option>
-                <Option value="room103">618/2</Option>
-                <Option value="room104">619</Option>
-                <Option value="room105">621</Option>
-                <Option value="room106">623</Option>
+                <Option value="617">617</Option>
+                <Option value="618/1">618/1</Option>
+                <Option value="618/2">618/2</Option>
+                <Option value="619">619</Option>
+                <Option value="621">621</Option>
+                <Option value="623">623</Option>
               </Select>
             </Form.Item>
           </Col>
