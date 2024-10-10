@@ -55,17 +55,22 @@ const menuItems = [
     key: "/sumary-room",
     icon: React.createElement(LaptopOutlined),
     label: "สรุปห้องสอบ",
-  }
+  },
   // {
   //   key: "/add-member-spacial-project",
   //   icon: React.createElement(UserOutlined),
   //   label: "เพิ่มรายชื่อนักศึกษา",
   // },
-  // {
-  //   key: "/student-no-lecture",
-  //   icon: React.createElement(UserOutlined),
-  //   label: "รายชื่อนักศึกษาที่ไม่มีอาจารย์ที่ปรึกษา",
-  // }
+  {
+    key: "/add-lecture",
+    icon: React.createElement(UserOutlined),
+    label: "เพิ่มอาจารย์ที่ปรึกษา",
+  },
+  {
+    key: "/create-project-for-student",
+    icon: React.createElement(UserOutlined),
+    label: "สร้างโปรเจกต์ให้นักศึกษา",
+  },
 ];
 
 const SiderBar = ({ page, pageName, pageSub, path }) => {
@@ -93,12 +98,12 @@ const SiderBar = ({ page, pageName, pageSub, path }) => {
           alt="logo"
           className="logo"
         />
-        <span>
+        <span style={{ fontSize: '20px'}}>
           Special Project Examination Management System for CSB Program
         </span>
         <span>
           
-          {"สวัสดี เจ้าหน้าที่ สุดหล่อ"}
+          {"สวัสดี เจ้าหน้าที่ สุดหล่อ สุดสวย"}<UserOutlined />
           </span>
       </Header>
 

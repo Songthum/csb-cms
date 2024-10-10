@@ -56,8 +56,8 @@ export default{
 
   // getAllProject
   getAllProject: (params) => service.get('/project-students', {params}),
-
-
+  updateProject: (data) => service.post('/project-students', {data}),//เพิ่มอาจารย์ที่ปรึกษา
+  createProject: (data) => service.post('/project-students', {data}),
 
   // getStudent
   getStudent: (data) => service.post('/students', {data}),
@@ -76,5 +76,10 @@ export default{
   // getSumaryRoom
   getSumaryRoom: (params) => service.get('/sumary-room', {params}),
 
+
+// createAllProject
+  createProject: (data) => service.post('/create-form', {data}),
 }
+
+
 

@@ -65,6 +65,10 @@ export default function SumaryRoom() {
       dataIndex: "roomExam",
     },
     {
+      title: "nameExam",
+      dataIndex: "nameExam",
+    },
+    {
       title: "Time",
       dataIndex: "projects",
       render: (projects) => (
