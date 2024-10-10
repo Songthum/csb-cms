@@ -1,15 +1,13 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import App from '../../App';
 import SideBar from '../component/sidebar';
 import ExamManage from '../page/exam-management/index';
 import RoomManagement from '../page/room-management/index';
-import MemberSpacialProject from '../page/member-spacial-project/index';
-import AddMemberSpacialProject from '../page/add-member-spacial-project/index';
 import Sp2 from '../page/member-spacial-project/sp-2/index';
 import Sp1 from '../page/member-spacial-project/sp-1/index';
-import StudentNoLecture from '../page/student-no-lecture/index';
+import AddLecture from '../page/add-lecture/index';
 import SumaryRoom from '../page/sumary-room/index';
-
+import CreateProjectForStudent from '../page/create-project-for-student/index';
 import '../theme/css/sidebar.css';
 
 const router = createBrowserRouter([
@@ -80,27 +78,30 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "add-member-spacial-project",
+    path: "/add-lecture",
     element: (
       <SideBar 
-        page={ <AddMemberSpacialProject />}
-        pageName={"เพิ่มรายชื่อนักศึกษา"}
+        page={ <AddLecture />}
+        pageName={"รายชื่อโครงงาน"}
         pageSub={""}
-        path={"/add-member-spacial-project"}
+        path={"/add-lecture"}
       />
     ),
   },
   {
-    path: "/student-no-lecture",
+    path: "/create-project-for-student",
     element: (
       <SideBar 
-        page={ <StudentNoLecture />}
-        pageName={"รายชื่อนักศึกษา"}
-        pageSub={"ไม่มีวิชา"}
-        path={"/student-no-lecture"}
+        page={ <CreateProjectForStudent />}
+        pageName={""}
+        pageSub={""}
+        path={"/create-project-for-student"}
       />
     ),
-  }
+  },
+
+
+  
 ]);
 
 export default router;

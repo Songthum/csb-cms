@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../../utils/form/api";
-import {
-  Form,
-  Select,
-  Button,
-  Typography,
-  Row,
-  Col,
-  DatePicker,
-  Input,
-} from "antd";
+import { Form, Select, Button, Typography, Row, Col, DatePicker, Input, notification } from "antd";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -27,20 +18,7 @@ function App() {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [data, setData] = useState([]);
   const [refereeNames, setRefereeNames] = useState([]);
-  // const refereeNames = [
-  //   {
-  //     keyLecturer: "TTR",
-  //     nameLecturer: "อ.ธนาธร",
-  //   },
-  //   {
-  //     keyLecturer: "MOODENG",
-  //     nameLecturer: "อ.มุดเด่น",
-  //   },
-  //   {
-  //     keyLecturer: "YOMRACH",
-  //     nameLecturer: "อ.ยมราช",
-  //   },
-  // ];
+
   const projectTimes = [
     "09:00",
     "09:15",
@@ -68,7 +46,6 @@ function App() {
     "15:45",
   ];
 
-  // Fetch project data and map _id to projectId
   useEffect(() => {
     api
       .getAllProject()
@@ -111,9 +88,17 @@ function App() {
         setReferees([{ keyLecturer: "", nameLecturer: "", roleLecturer: "" }]);
         setProjects([{ projectId: "", projectName: "", start_in_time: "" }]);
         setIsSubmitDisabled(true);
+
+        // Show notification on success
+        notification.success({
+          message: "สำเร็จ",
+          description: "จัดการห้องสำเร็จ", // Success message
+          placement: "topRight", // Position of the notification
+        });
       })
       .catch(console.error);
   };
+
 
   const checkFormValidity = () => {
     const values = form.getFieldsValue();
@@ -195,6 +180,25 @@ function App() {
         !selected.includes(option) || selected[currentIndex] === option
     );
 
+  const filterRefereeOptions = (options, selected) =>
+    options.filter((option) => !selected.includes(option.keyLecturer));
+
+  const handleRoleChange = (index, value) => {
+    // Check if the selected value is 'main'
+    if (value === 'main') {
+      // Check if another referee is already set as 'main'
+      const isChairpersonExists = referees.some((referee, i) => referee.roleLecturer === 'main' && i !== index);
+      if (isChairpersonExists) {
+        // Optionally display a message to the user
+        alert("มีกรรมการสอบท่านอื่นเป็นประธานกรรมการอยู่แล้ว"); // "Another referee is already assigned as Chairperson."
+        return; // Prevent the change
+      }
+    }
+
+    // If it's a valid change, proceed to update the state
+    handleDynamicFieldChange(setReferees, index, "roleLecturer", value);
+  };
+
   return (
     <div style={{ maxWidth: "90%", margin: "auto", padding: "20px" }}>
       <Title level={2} style={{ textAlign: "center" }}>
@@ -231,9 +235,9 @@ function App() {
               rules={[{ required: true, message: "กรุณาเลือกชื่อการสอบ" }]}
             >
               <Select placeholder="เลือกชื่อการสอบ">
-                <Option value="CSB01">สอบข้อหัว</Option>
-                <Option value="CSB02">สอบก้าวหน้า</Option>
-                <Option value="CSB03">สอบป้องกัน</Option>
+                <Option value="สอบข้อหัว">สอบข้อหัว</Option>
+                <Option value="สอบก้าวหน้า">สอบก้าวหน้า</Option>
+                <Option value="สอบป้องกัน">สอบป้องกัน</Option>
               </Select>
             </Form.Item>
           </Col>
@@ -275,16 +279,14 @@ function App() {
             <Col span={12}>
               <Form.Item
                 label="ชื่อกรรมการสอบ"
-                rules={[
-                  { required: true, message: "กรุณาเลือกชื่อกรรมการสอบ" },
-                ]}
+                rules={[{ required: true, message: "กรุณาเลือกชื่อกรรมการสอบ" }]}
               >
                 <Select
                   placeholder="เลือกชื่อกรรมการสอบ"
-                  value={referees[index].keyLecturer}
+                  value={referees[index].nameLecturer}
                   onChange={(value) => handleLecturerChange(index, value)}
                 >
-                  {refereeNames.map(({ keyLecturer, nameLecturer }) => (
+                  {filterRefereeOptions(refereeNames, referees.map(r => r.keyLecturer)).map(({ keyLecturer, nameLecturer }) => (
                     <Option key={keyLecturer} value={keyLecturer}>
                       {nameLecturer}
                     </Option>
@@ -300,19 +302,20 @@ function App() {
                 <Select
                   placeholder="เลือกตำแหน่ง"
                   value={referees[index].roleLecturer}
-                  onChange={(value) =>
-                    handleDynamicFieldChange(
-                      setReferees,
-                      index,
-                      "roleLecturer",
-                      value
-                    )
-                  }
+                  onChange={(value) => handleDynamicFieldChange(setReferees, index, "roleLecturer", value)}
+                  disabled={referees[index].roleLecturer === "main"} // Disable if already Chairperson
                 >
-                  <Option value="main">ประธานกรรมการ</Option>
-                  <Option value="sub">กรรมการ</Option>
+                  {referees.every((referee) => referee.roleLecturer !== "main") || referees[index].roleLecturer === "main" ? (
+                    <>
+                      <Option value="main">ประธานกรรมการ</Option>
+                      <Option value="sub">กรรมการ</Option>
+                    </>
+                  ) : (
+                    <Option value="sub">กรรมการ</Option>
+                  )}
                 </Select>
               </Form.Item>
+
             </Col>
           </Row>
         ))}
