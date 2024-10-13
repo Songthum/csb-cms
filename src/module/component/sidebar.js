@@ -43,7 +43,7 @@ const menuItems = [
     children: [
       {
         key: "/member-spacial-project/sp-1",
-        label: "Special Project 1", 
+        label: "Special Project 1",
       },
       {
         key: "/member-spacial-project/sp-2",
@@ -75,9 +75,10 @@ const menuItems = [
 
 const SiderBar = ({ page, pageName, pageSub, path }) => {
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer, borderRadiusLG,
+    },
   } = theme.useToken();
-  
+
   const [selectedKey, setSelectedKey] = useState("/");
   const navigate = useNavigate();
 
@@ -98,24 +99,38 @@ const SiderBar = ({ page, pageName, pageSub, path }) => {
           alt="logo"
           className="logo"
         />
-        <span style={{ fontSize: '20px'}}>
+        <span style={{ fontSize: '20px' }}>
           Special Project Examination Management System for CSB Program
         </span>
         <span>
-          
+
           {"สวัสดี เจ้าหน้าที่ สุดหล่อ สุดสวย"}<UserOutlined />
-          </span>
+        </span>
       </Header>
 
-      <Layout>
-        <Sider className="sider" style={{ background: colorBgContainer }}>
-          <p>เจ้าหน้าที่</p>
+      <Layout
+        style={{
+          width: "100vw",
+        }}
+      >
+        <Sider
+
+          className="sider"
+          style={{
+            whiteSpace: "normal", wordBreak: "break-word",
+            background: colorBgContainer,
+           }}
+        >
           <Menu
+            // mode="vertical"
             mode="inline"
+            // new line 
+            // inlineIndent={0}
             selectedKeys={[selectedKey]}
             defaultOpenKeys={["sub1"]}
             items={menuItems}
             onClick={handleMenuClick}
+            style={{ whiteSpace: "normal", wordBreak: "break-word" }}
           />
         </Sider>
 
